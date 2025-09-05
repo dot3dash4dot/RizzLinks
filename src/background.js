@@ -21,9 +21,15 @@ chrome.action.onClicked.addListener((tab) => {
                     issueSummary = `${issueNumber}: No issue title found`;
                 }
 
+                // Create the HTML hyperlink
                 const htmlLink = `<a href="${url}">${issueSummary}</a>`;
-                navigator.clipboard.writeText(htmlLink).then(() => {
-                    console.log('Copied to clipboard:', htmlLink);
+
+                // Use the ClipboardItem API to copy the hyperlink as HTML
+                const blob = new Blob([htmlLink], { type: 'text/html' });
+                const clipboardItem = new ClipboardItem({ 'text/html': blob });
+
+                navigator.clipboard.write([clipboardItem]).then(() => {
+                    console.log('Copied to clipboard as a hyperlink:', htmlLink);
                 }).catch(err => {
                     console.error('Failed to copy:', err);
                 });
