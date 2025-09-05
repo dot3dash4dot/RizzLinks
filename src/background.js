@@ -24,12 +24,19 @@ chrome.action.onClicked.addListener((tab) => {
                 // Create the HTML hyperlink
                 const htmlLink = `<a href="${url}">${issueSummary}</a>`;
 
-                // Use the ClipboardItem API to copy the hyperlink as HTML
-                const blob = new Blob([htmlLink], { type: 'text/html' });
-                const clipboardItem = new ClipboardItem({ 'text/html': blob });
+                // Create the Markdown version of the link
+                const markdownLink = `[${issueSummary}](${url})`;
+
+                // Use the ClipboardItem API to copy both Markdown and HTML versions
+                const clipboardItem = new ClipboardItem({
+                    'text/plain': new Blob([markdownLink], { type: 'text/plain' }),
+                    'text/html': new Blob([htmlLink], { type: 'text/html' }),
+                });
 
                 navigator.clipboard.write([clipboardItem]).then(() => {
-                    console.log('Copied to clipboard as a hyperlink:', htmlLink);
+                    console.log('Copied to clipboard with both Markdown and HTML versions:');
+                    console.log('Markdown:', markdownLink);
+                    console.log('HTML:', htmlLink);
                 }).catch(err => {
                     console.error('Failed to copy:', err);
                 });
