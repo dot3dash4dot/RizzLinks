@@ -28,6 +28,12 @@ chrome.action.onClicked.addListener((tab) => {
                         'text/html': new Blob([htmlLink], { type: 'text/html' }),
                     });
 
+                    // Clipboard write won't work if the user is focussed on the address bar rather than the page
+                    if (!document.hasFocus()) {
+                        alert("Please click into the page (rather than the address bar) before attempting to use the extension.");
+                        return;
+                    }
+
                     navigator.clipboard.write([clipboardItem]).then(() => {
                         console.log('Copied to clipboard with both Markdown and HTML versions:');
                         console.log('Markdown:', markdownLink);
