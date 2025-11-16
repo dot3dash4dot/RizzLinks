@@ -5,28 +5,37 @@ chrome.action.onClicked.addListener((tab) => {
             func: () => {
                 // This code runs in the context of the page
 
-                const url = window.location.href;
+                function getClipboardLinks() {
+                    const url = window.location.href;
 
-                // Extract the issue number from the URL
-                const issueNumberMatch = url.match(/\/browse\/([A-Z]+-\d+)/);
-                const issueNumber = issueNumberMatch ? issueNumberMatch[1] : null;
+                    // Extract the issue number from the URL
+                    const issueNumberMatch = url.match(/\/browse\/([A-Z]+-\d+)/);
+                    const issueNumber = issueNumberMatch ? issueNumberMatch[1] : null;
 
-                const summaryElement = document.querySelector('#summary-val');
+                    const summaryElement = document.querySelector('#summary-val');
 
-                if (issueNumber && summaryElement) {
-                    const issueSummary = `${issueNumber}: ${summaryElement.textContent.trim()}`;
+                    if (issueNumber && summaryElement) {
+                        const issueSummary = `${issueNumber}: ${summaryElement.textContent.trim()}`;
 
-                    // Create the HTML hyperlink
-                    const htmlLink = `<a href="${url}">${issueSummary}</a>`;
+                        // Create the HTML hyperlink
+                        const htmlLink = `<a href="${url}">${issueSummary}</a>`;
 
-                    // Create the Markdown version of the link
-                    const markdownLink = `[${issueSummary}](${url})`;
+                        // Create the Markdown version of the link
+                        const markdownLink = `[${issueSummary}](${url})`;
 
-                    // Use the ClipboardItem API to copy both Markdown and HTML versions
-                    const clipboardItem = new ClipboardItem({
-                        'text/plain': new Blob([markdownLink], { type: 'text/plain' }),
-                        'text/html': new Blob([htmlLink], { type: 'text/html' }),
-                    });
+                        // Return the ClipboardItem containing both Markdown and HTML versions
+                        return new ClipboardItem({
+                            'text/plain': new Blob([markdownLink], { type: 'text/plain' }),
+                            'text/html': new Blob([htmlLink], { type: 'text/html' }),
+                        });
+                    }
+
+                    return null; // Return null if the issue number or summary element is not found
+                }
+
+                const clipboardItem = getClipboardLinks();
+
+                if (clipboardItem) {
 
                     // Clipboard write won't work if the user is focussed on the address bar rather than the page
                     if (!document.hasFocus()) {
@@ -36,8 +45,18 @@ chrome.action.onClicked.addListener((tab) => {
 
                     navigator.clipboard.write([clipboardItem]).then(() => {
                         console.log('Copied to clipboard with both Markdown and HTML versions:');
-                        console.log('Markdown:', markdownLink);
-                        console.log('HTML:', htmlLink);
+                        
+                        clipboardItem.getType('text/plain').then((markdownBlob) => {
+                            markdownBlob.text().then((markdownText) => {
+                                console.log('Markdown:', markdownText);
+                            });
+                        });
+
+                        clipboardItem.getType('text/html').then((htmlBlob) => {
+                            htmlBlob.text().then((htmlText) => {
+                                console.log('HTML:', htmlText);
+                            });
+                        });
 
                         // Notify the background script that copying was successful
                         chrome.runtime.sendMessage({ action: "showBadge", status: "success" });
