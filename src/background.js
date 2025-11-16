@@ -23,19 +23,22 @@ chrome.action.onClicked.addListener((tab) => {
                         // Create the Markdown version of the link
                         const markdownLink = `[${issueSummary}](${url})`;
 
-                        // Return the ClipboardItem containing both Markdown and HTML versions
-                        return new ClipboardItem({
-                            'text/plain': new Blob([markdownLink], { type: 'text/plain' }),
-                            'text/html': new Blob([htmlLink], { type: 'text/html' }),
-                        });
+                        return { markdownLink, htmlLink };
                     }
 
                     return null; // Return null if the issue number or summary element is not found
                 }
 
-                const clipboardItem = getClipboardLinks();
+                const clipboardLinks = getClipboardLinks();
 
-                if (clipboardItem) {
+                if (clipboardLinks) {
+                    const { markdownLink, htmlLink } = clipboardLinks;
+
+                    // Use the ClipboardItem API to copy both Markdown and HTML versions
+                    const clipboardItem = new ClipboardItem({
+                        'text/plain': new Blob([markdownLink], { type: 'text/plain' }),
+                        'text/html': new Blob([htmlLink], { type: 'text/html' }),
+                    });
 
                     // Clipboard write won't work if the user is focussed on the address bar rather than the page
                     if (!document.hasFocus()) {
