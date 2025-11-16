@@ -81,7 +81,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "showBadge") {
         if (message.status === "success") {
             // Randomly select a badge text for success
-            const successBadgeTexts = ["yay", "sick", "nice", "woop", "1337", "cool", "epic", ":)", "W", "fire", "boss"];
+            const successBadgeTexts = ["yay", "sick", "nice", "woop", "cool", "epic", ":)", "W", "fire", "boss"];
             const randomSuccessText = successBadgeTexts[Math.floor(Math.random() * successBadgeTexts.length)];
 
             // Set the badge for success
