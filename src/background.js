@@ -12,10 +12,17 @@ chrome.action.onClicked.addListener((tab) => {
                         return null;
                     }
 
+                    let issueNumberElement, issueSummaryElement;
                     let issuePartURL, issueNumber, issueSummary;
 
-                    const issueNumberElement = document.querySelector('#key-val');
-                    const issueSummaryElement = document.querySelector('#summary-val');
+                    //Look for elements on a standard Jira issue page
+                    issueNumberElement = document.querySelector('#key-val');
+                    issueSummaryElement = document.querySelector('#summary-val');
+
+                    if (!issueNumberElement) {
+                        //Look for elements for issues opened in a board's side panel
+                        issueNumberElement = document.querySelector('#issuekey-val > h3 > a');
+                    }
                     
                     if (issueNumberElement && issueSummaryElement) {
                         issuePartURL = issueNumberElement.getAttribute('href');
