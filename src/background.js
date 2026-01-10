@@ -6,20 +6,32 @@ chrome.action.onClicked.addListener((tab) => {
                 // This code runs in the context of the page
 
                 function getLinks(url) {
-                    // Extract the issue number from the URL
-                    const issueNumberMatch = url.match(/\/browse\/([A-Z]+-\d+)/);
-                    const issueNumber = issueNumberMatch ? issueNumberMatch[1] : null;
+                    const baseURLMatch = url.match(/(http.*?\/\/.*?)\//);
+                    const baseURL = baseURLMatch ? baseURLMatch[1] : null;
+                    if (!baseURL) {
+                        return null;
+                    }
 
-                    const summaryElement = document.querySelector('#summary-val');
+                    let issuePartURL, issueNumber, issueSummary;
 
-                    if (issueNumber && summaryElement) {
-                        const issueSummary = `${issueNumber}: ${summaryElement.textContent.trim()}`;
+                    const issueNumberElement = document.querySelector('#key-val');
+                    const issueSummaryElement = document.querySelector('#summary-val');
+                    
+                    if (issueNumberElement && issueSummaryElement) {
+                        issuePartURL = issueNumberElement.getAttribute('href');
+                        issueNumber = issueNumberElement.textContent.trim();
+                        issueSummary = issueSummaryElement.textContent.trim();
+                    }
+
+                    if (issueNumber && issueSummary) {
+                        const issueURL = `${baseURL}${issuePartURL}`;
+                        const linkTitle = `${issueNumber}: ${issueSummary}`;
 
                         // Create the HTML hyperlink
-                        const htmlLink = `<a href="${url}">${issueSummary}</a>`;
+                        const htmlLink = `<a href="${issueURL}">${linkTitle}</a>`;
 
                         // Create the Markdown version of the link
-                        const markdownLink = `[${issueSummary}](${url})`;
+                        const markdownLink = `[${linkTitle}](${issueURL})`;
 
                         return { markdownLink, htmlLink };
                     }
