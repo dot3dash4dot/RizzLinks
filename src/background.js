@@ -5,9 +5,7 @@ chrome.action.onClicked.addListener((tab) => {
             func: () => {
                 // This code runs in the context of the page
 
-                function getClipboardLinks() {
-                    const url = window.location.href;
-
+                function getLinks(url) {
                     // Extract the issue number from the URL
                     const issueNumberMatch = url.match(/\/browse\/([A-Z]+-\d+)/);
                     const issueNumber = issueNumberMatch ? issueNumberMatch[1] : null;
@@ -27,12 +25,13 @@ chrome.action.onClicked.addListener((tab) => {
                     }
 
                     return null; // Return null if the issue number or summary element is not found
-                }
+                }//end - Need this comment to help regex extraction in tests
 
-                const clipboardLinks = getClipboardLinks();
+                const url = window.location.href;
+                const links = getLinks(url);
 
-                if (clipboardLinks) {
-                    const { markdownLink, htmlLink } = clipboardLinks;
+                if (links) {
+                    const { markdownLink, htmlLink } = links;
 
                     // Use the ClipboardItem API to copy both Markdown and HTML versions
                     const clipboardItem = new ClipboardItem({
