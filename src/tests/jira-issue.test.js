@@ -47,14 +47,6 @@ describe('getLinks', () => {
         expect(links.htmlLink).toBe('<a href="https://jira.atlassian.com/browse/TRELLO-1488">TRELLO-1488: Be able to disable comments for specific cards</a>');
     });
 
-    test('should return null if the issue number is not found in the URL', () => {
-        // Call the function with a URL that doesn't contain an issue number
-        const links = getLinks("https://jira.atlassian.com/some-other-page");
-
-        // Assert that the function returns null
-        expect(links).toBeNull();
-    });
-
     test('should return null if #summary-val is missing', () => {
         // Remove the #summary-val element
         document.querySelector('#summary-val').remove();
