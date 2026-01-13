@@ -33,6 +33,12 @@ chrome.action.onClicked.addListener((tab) => {
                                 linkURL = `${baseURL}${issuePartURL}`;
                                 linkTitle = `${issueNumber}: ${issueSummary}`;
                             }
+                            else {
+                                console.error('Failed to parse Jira issue details from page elements');
+                            }
+                        }
+                        else {
+                            console.error('Failed to find Jira page elements');
                         }
                     }
                     else if (pageURL.includes("servicenow")) {
@@ -44,9 +50,19 @@ chrome.action.onClicked.addListener((tab) => {
                         ];
 
                         //Find first matching element
-                        const objectTitleElement = elementSelectors.find(selector => document.querySelector(selector));
-                        if (objectTitleElement) {
-                            linkTitle = objectTitleElement.getAttribute('value');
+                        const entityDescriptionElement = elementSelectors.find(selector => document.querySelector(selector));
+                        if (entityDescriptionElement) {
+                            const entityDescription = entityDescriptionElement.getAttribute('value');
+
+                            if (entityDescription) {
+                                linkTitle = entityDescription.trim();
+                            }
+                            else {
+                                console.error('Failed to parse ServiceNow entity details from page elements');
+                            }
+                        }
+                        else {
+                            console.error('Failed to find ServiceNow page element');
                         }
                     }
 
@@ -99,13 +115,13 @@ chrome.action.onClicked.addListener((tab) => {
                         // Notify the background script that copying was successful
                         chrome.runtime.sendMessage({ action: "showBadge", status: "success" });
                     }).catch(err => {
-                        console.error('Failed to copy:', err);
+                        console.error('Failed to copy to clipboard:', err);
 
                         // Notify the background script that copying failed
                         chrome.runtime.sendMessage({ action: "showBadge", status: "failure" });
                     });
                 } else {
-                    console.error('Failed to extract issue number or summary element.');
+                    console.error('Failed to create links');
 
                     // Notify the background script that copying failed
                     chrome.runtime.sendMessage({ action: "showBadge", status: "failure" });
