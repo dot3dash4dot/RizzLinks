@@ -86,6 +86,7 @@ chrome.action.onClicked.addListener((tab) => {
                         }
                         if (!entityDescriptionElement) {
                             console.error('Failed to find ServiceNow page element');
+                            return null;
                         }
 
                         const entityDescription = entityDescriptionElement.getAttribute('value');
