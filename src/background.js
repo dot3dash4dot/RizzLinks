@@ -1,4 +1,4 @@
-chrome.action.onClicked.addListener((tab) => {
+function copyLinkToClipboard(tab) {
     chrome.scripting.executeScript( //Dynamically inject script into the page's context to bypass Jira's Content Security Policy restrictions
         {
             target: { tabId: tab.id },
@@ -143,7 +143,7 @@ chrome.action.onClicked.addListener((tab) => {
                                 console.log('HTML:', htmlText);
                             });
                         });
-
+                        
                         // Notify the background script that copying was successful
                         chrome.runtime.sendMessage({ action: "showBadge", status: "success" });
                     }).catch(err => {
@@ -168,6 +168,24 @@ chrome.action.onClicked.addListener((tab) => {
             }
         }
     );
+}
+
+chrome.action.onClicked.addListener((tab) => {
+    copyLinkToClipboard(tab);
+});
+
+// Create the context menu item
+chrome.contextMenus.create({
+    title: "Copy RizzLink",
+    contexts: ["page"],
+    id: "copy-rizzlink"
+});
+
+// Handle context menu clicks
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "copy-rizzlink") {
+        copyLinkToClipboard(tab);
+    }
 });
 
 // Helper function to set badge text and background color
