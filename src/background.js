@@ -131,6 +131,12 @@ function copyLinkToClipboard(tab) {
                     return null; // Return null if the links couldn't be created
                 }//end - Need this comment to help regex extraction in tests
 
+                // Clipboard write won't work if the user is focussed on the address bar rather than the page
+                if (!document.hasFocus()) {
+                    alert("Please click into the page (rather than the address bar) before attempting to use the extension.");
+                    return;
+                }
+
                 const pageURL = window.location.href;
                 const links = getLinks(pageURL);
 
@@ -142,12 +148,6 @@ function copyLinkToClipboard(tab) {
                         'text/plain': new Blob([markdownLink], { type: 'text/plain' }),
                         'text/html': new Blob([htmlLink], { type: 'text/html' }),
                     });
-
-                    // Clipboard write won't work if the user is focussed on the address bar rather than the page
-                    if (!document.hasFocus()) {
-                        alert("Please click into the page (rather than the address bar) before attempting to use the extension.");
-                        return;
-                    }
 
                     navigator.clipboard.write([clipboardItem]).then(() => {
                         console.log('Copied to clipboard with both Markdown and HTML versions:');
