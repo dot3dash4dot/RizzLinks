@@ -107,7 +107,7 @@ chrome.action.onClicked.addListener((tab) => {
                         return { markdownLink, htmlLink };
                     }
 
-                    return null; // Return null if the issue number or summary element is not found
+                    return null; // Return null if the links couldn't be created
                 }//end - Need this comment to help regex extraction in tests
 
                 const pageURL = window.location.href;
