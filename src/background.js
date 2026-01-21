@@ -5,6 +5,21 @@ function copyLinkToClipboard(tab) {
             func: () => {
                 // This code runs in the context of the page
 
+                function highlightPageElementTemporarily(element) {
+                    if (element) {
+                        const originalBackground = element.style.backgroundColor;
+                        const originalTransition = element.style.transition;
+                        element.style.transition = 'background-color 0.5s ease';
+                        element.style.backgroundColor = '#ff7f2ab4';
+                        setTimeout(() => {
+                            element.style.backgroundColor = originalBackground;
+                            setTimeout(() => {
+                                element.style.transition = originalTransition;
+                            }, 500); // Wait for transition to complete
+                        }, 1000); // Highlight for 1 second, then fade out over 0.5s
+                    }
+                }
+
                 function getLinks(pageURL) {
                     let linkURL, linkTitle;
 
@@ -32,6 +47,9 @@ function copyLinkToClipboard(tab) {
                             if (issuePartURL && issueNumber && issueSummary) {
                                 linkURL = `${baseURL}${issuePartURL}`;
                                 linkTitle = `${issueNumber}: ${issueSummary}`;
+
+                                highlightPageElementTemporarily(issueNumberElement);
+                                highlightPageElementTemporarily(issueSummaryElement);
                             }
                             else {
                                 console.error('Failed to parse Jira issue details from page elements');
@@ -95,7 +113,9 @@ function copyLinkToClipboard(tab) {
                             return null;
                         }
 
-                        linkTitle = entityDescription.trim();   
+                        linkTitle = entityDescription.trim();
+
+                        highlightPageElementTemporarily(entityDescriptionElement);
                     }
 
                     if (linkURL && linkTitle) {
