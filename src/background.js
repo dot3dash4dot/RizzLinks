@@ -6,7 +6,7 @@ function copyLinkToClipboard(tab) {
                 // This code runs in the context of the page
 
                 function highlightPageElementTemporarily(element) {
-                    if (element) {
+                    if (element && element.style) {
                         const originalBackground = element.style.backgroundColor;
                         const originalTransition = element.style.transition;
                         element.style.transition = 'background-color 0.5s ease';
@@ -22,6 +22,7 @@ function copyLinkToClipboard(tab) {
 
                 function getLinks(pageURL) {
                     let linkURL, linkTitle;
+                    let elements = [];
 
                     if (pageURL.includes("jira")) {
                         const baseURLMatch = pageURL.match(/(http.*?\/\/.*?)\//);
@@ -48,8 +49,7 @@ function copyLinkToClipboard(tab) {
                                 linkURL = `${baseURL}${issuePartURL}`;
                                 linkTitle = `${issueNumber}: ${issueSummary}`;
 
-                                highlightPageElementTemporarily(issueNumberElement);
-                                highlightPageElementTemporarily(issueSummaryElement);
+                                elements = [issueNumberElement, issueSummaryElement];
                             }
                             else {
                                 console.error('Failed to parse Jira issue details from page elements');
@@ -115,7 +115,7 @@ function copyLinkToClipboard(tab) {
 
                         linkTitle = entityDescription.trim();
 
-                        highlightPageElementTemporarily(entityDescriptionElement);
+                        elements = [entityDescriptionElement];
                     }
 
                     if (linkURL && linkTitle) {
@@ -125,7 +125,7 @@ function copyLinkToClipboard(tab) {
                         // Create the Markdown version of the link
                         const markdownLink = `[${linkTitle}](${linkURL})`;
 
-                        return { markdownLink, htmlLink };
+                        return { markdownLink, htmlLink, elements };
                     }
 
                     return null; // Return null if the links couldn't be created
@@ -141,7 +141,7 @@ function copyLinkToClipboard(tab) {
                 const links = getLinks(pageURL);
 
                 if (links) {
-                    const { markdownLink, htmlLink } = links;
+                    const { markdownLink, htmlLink, elements } = links;
 
                     // Use the ClipboardItem API to copy both Markdown and HTML versions
                     const clipboardItem = new ClipboardItem({
@@ -164,6 +164,11 @@ function copyLinkToClipboard(tab) {
                             });
                         });
                         
+                        // Highlight the relevant page elements
+                        if (elements) {
+                            elements.forEach(el => highlightPageElementTemporarily(el));
+                        }
+
                         // Notify the background script that copying was successful
                         chrome.runtime.sendMessage({ action: "showBadge", status: "success" });
                     }).catch(err => {
