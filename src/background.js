@@ -62,42 +62,51 @@ function copyLinkToClipboard(tab) {
                     else if (pageURL.includes("servicenow")) {
                         linkURL = pageURL;
 
+                        let documentToQuery, elementSelectors;
+
                         const macroponentElements = Array.from(document.querySelectorAll('body > *'))
                             .filter(el => el.tagName.toLowerCase().startsWith('macroponent')
                         );
                         const macroponentElement = macroponentElements[0];
-                        if (!macroponentElement) {
-                            console.error('Failed to find ServiceNow macroponent element');
-                            return null;
-                        }
+                        if (macroponentElement) {  
+                            const shadowRoot = macroponentElement.shadowRoot;
+                            if (!shadowRoot) {
+                                console.error('Failed to find ServiceNow shadow root element');
+                                return null;
+                            }
+                            
+                            const iframe = shadowRoot.querySelector('#gsft_main');
+                            if (!iframe) {
+                                console.error('Failed to find ServiceNow iframe element');
+                                return null;
+                            }
 
-                        const shadowRoot = macroponentElement.shadowRoot;
-                        if (!shadowRoot) {
-                            console.error('Failed to find ServiceNow shadow root element');
-                            return null;
-                        }
-                        
-                        const iframe = shadowRoot.querySelector('#gsft_main');
-                        if (!iframe) {
-                            console.error('Failed to find ServiceNow iframe element');
-                            return null;
-                        }
+                            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                            if (!iframeDocument) {
+                                console.error('Failed to access ServiceNow iframe document');
+                                return null;
+                            }
 
-                        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-                        if (!iframeDocument) {
-                            console.error('Failed to access ServiceNow iframe document');
-                            return null;
-                        }
+                            documentToQuery = iframeDocument;
 
-                        // Add your ServiceNow selectors here - see README for instructions
-                        const elementSelectors = [
-                            '#sys_readonly\\.entity_name\\.field_name'
-                        ];
+                            // Add your ServiceNow selectors here - see README for instructions
+                            elementSelectors = [
+                                '#sys_readonly\\.entity_name\\.field_name'
+                            ];
+                        }
+                        else { // These ServiceNow pages don't use macroponents/iframes/etc.
+                            documentToQuery = document;
+
+                            // Add your ServiceNow selectors here - see README for instructions
+                            elementSelectors = [
+                                '#sys_readonly\\.entity_name\\.field_name'
+                            ];
+                        }
 
                         //Find first matching element
                         let entityDescriptionElement;
                         for (const selector of elementSelectors) {
-                            entityDescriptionElement = iframeDocument.querySelector(selector);
+                            entityDescriptionElement = documentToQuery.querySelector(selector);
                             if (entityDescriptionElement) {
                                 break;
                             }
