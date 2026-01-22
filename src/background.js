@@ -21,8 +21,7 @@ function copyLinkToClipboard(tab) {
                 }
 
                 function getLinks(pageURL) {
-                    let linkURL, linkTitle;
-                    let elements = [];
+                    let linkURL, linkTitle, elements;
 
                     if (pageURL.includes("jira")) {
                         const baseURLMatch = pageURL.match(/(http.*?\/\/.*?)\//);
@@ -159,19 +158,7 @@ function copyLinkToClipboard(tab) {
                     });
 
                     navigator.clipboard.write([clipboardItem]).then(() => {
-                        console.log('Copied to clipboard with both Markdown and HTML versions:');
-                        
-                        clipboardItem.getType('text/plain').then((markdownBlob) => {
-                            markdownBlob.text().then((markdownText) => {
-                                console.log('Markdown:', markdownText);
-                            });
-                        });
-
-                        clipboardItem.getType('text/html').then((htmlBlob) => {
-                            htmlBlob.text().then((htmlText) => {
-                                console.log('HTML:', htmlText);
-                            });
-                        });
+                        console.log('Links copied to clipboard');
                         
                         // Highlight the relevant page elements
                         if (elements) {
