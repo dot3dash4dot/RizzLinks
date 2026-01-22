@@ -196,10 +196,12 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 // Create the context menu item
-chrome.contextMenus.create({
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
     title: "Copy RizzLink",
     contexts: ["page"],
     id: "copy-rizzlink"
+  });
 });
 
 // Handle context menu clicks
