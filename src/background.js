@@ -61,6 +61,14 @@ function copyLinkToClipboard(tab) {
                     else if (pageURL.includes("servicenow")) {
                         linkURL = pageURL;
 
+                        // Add your ServiceNow selectors here - see README for instructions
+                        const macroponentElementSelectors = [
+                            '#sys_readonly\\.entity_name\\.field_name'
+                        ];
+                        const simpleElementSelectors = [
+                            '#sys_readonly\\.entity_name\\.field_name'
+                        ];
+
                         let documentToQuery, elementSelectors;
 
                         const macroponentElements = Array.from(document.querySelectorAll('body > *'))
@@ -87,19 +95,11 @@ function copyLinkToClipboard(tab) {
                             }
 
                             documentToQuery = iframeDocument;
-
-                            // Add your ServiceNow selectors here - see README for instructions
-                            elementSelectors = [
-                                '#sys_readonly\\.entity_name\\.field_name'
-                            ];
+                            elementSelectors = macroponentElementSelectors;
                         }
                         else { // These ServiceNow pages don't use macroponents/iframes/etc.
                             documentToQuery = document;
-
-                            // Add your ServiceNow selectors here - see README for instructions
-                            elementSelectors = [
-                                '#sys_readonly\\.entity_name\\.field_name'
-                            ];
+                            elementSelectors = simpleElementSelectors;
                         }
 
                         //Find first matching element
