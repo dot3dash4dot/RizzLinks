@@ -125,6 +125,20 @@ function copyLinkToClipboard(tab) {
 
                         elements = [entityDescriptionElement];
                     }
+                    else if (pageURL.includes("github")) {
+                        linkURL = pageURL;
+
+                        //Look for elements on a standard GitHub PR page
+                        let titleElement = document.querySelector('h1 > span.markdown-title');
+                        
+                        if (titleElement) {
+                            linkTitle = titleElement.textContent.trim();
+                            elements = [titleElement];
+                        }
+                        else {
+                            console.error('Failed to find GitHub PR page elements');
+                        }
+                    }
 
                     if (linkURL && linkTitle) {
                         // Create the HTML hyperlink

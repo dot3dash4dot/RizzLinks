@@ -1,12 +1,12 @@
 # RizzLinks
 
-Chrome extension to allow you to copy readable Jira and ServiceNow links to your clipboard at the click of a button.
+Chrome extension to allow you to copy readable Jira, ServiceNow, and GitHub PR links to your clipboard at the click of a button.
 
 Find it unhelpful when someone sends you a link to a Jira issue like [ABC-123](https://jira.atlassian.com/browse/ABC-123) and you have to load the issue to see what the issue is? Wouldn't it be nice if everyone could just as easily send you an easily readable link like [ABC-123: Add unit tests](https://jira.atlassian.com/browse/ABC-123)? Well now they can!
 
 The extension also supports creating readable links for ServiceNow pages (see below for additional instructions), so now you can send someone a link like [Incident123](https://dev12345.service-now.com/nav_to.do?uri=incident.do?sys_id=1234567890abcdef) rather than https://dev12345.service-now.com/nav_to.do?uri=incident.do?sys_id=1234567890abcdef
 
-With the extension installed, simply navigate to the Jira issue or ServiceNow page, and either:
+With the extension installed, simply navigate to the Jira issue, ServiceNow or GitHub PR page, and either:
 * Right-click on the page > select ![icon](src/assets/icon16.png) `Copy RizzLink`
 * Click on the extension's icon ![icon](src/assets/icon16.png) in the toolbar (see Installation step below)
 
