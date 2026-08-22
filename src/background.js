@@ -133,6 +133,13 @@ function copyLinkToClipboard(tab) {
                         
                         if (titleElement) {
                             linkTitle = titleElement.textContent.trim();
+
+                            const prNumMatch = pageURL.match(/http.*\/(\d+)/);
+                            const prNum = prNumMatch ? prNumMatch[1] : null;
+                            if (prNum) {
+                                linkTitle = `#${prNum}: ${linkTitle}`;
+                            }
+
                             elements = [titleElement];
                         }
                         else {
